@@ -1,0 +1,41 @@
+Source du cour : https://www.alexandria-library.co/ressources-nodejs-sql/
+
+Node -v
+
+npm -v
+
+Install express on nodeJS
+
+=> npm install express --save
+
+Install nodemon on nodeJS
+
+=> npm install nodemon --save-dev
+
+Install morgan (dev tools for debuging)
+
+=> npm install morgan --save-dev
+
+Install serve-favicon (Manage favicon)
+
+=> npm install serve-favicon --save 
+
+
+Install body parser (parse json to string)
+
+=> npm install body-parser --save 
+
+Installation d'un ORM( permet de gerer n'importe quelle bass de donnée sans utilistation de SQL)
+
+sequelize => ORM javascript qui permet de géré les traitements asynchrone il suporte la plus part 
+		des BD POSTGREY MYSQL LITE
+
+=> npm install sequelize --save
+
+pilote de la BD à utiliser => npm install mariadb --save  
+
+
+serge@bcdtravel.ci, nprudhomme@bcdtravel.ci, mistralvoyages@yahoo.fr
+paulango7@gmail.com
+
+
