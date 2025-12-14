@@ -35,37 +35,18 @@ jobs:
         include:
           - language: javascript-typescript
             build-mode: none
-        # CodeQL supports the following values keywords for 'language': 'actions', 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'rust', 'swift'
-        # Use `c-cpp` to analyze code written in C, C++ or both
-        # Use 'java-kotlin' to analyze code written in Java, Kotlin or both
-        # Use 'javascript-typescript' to analyze code written in JavaScript, TypeScript or both
-        # To learn more about changing the languages that are analyzed or customizing the build mode for your analysis,
-        # see https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning.
-        # If you are analyzing a compiled language, you can modify the 'build-mode' for that language to customize how
-        # your codebase is analyzed, see https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      # Add any setup steps before running the `github/codeql-action/init` action.
-      # This includes steps like installing compilers or runtimes (`actions/setup-node`
-      # or others). This is typically only required for manual builds.
-      # - name: Setup runtime (example)
-      #   uses: actions/setup-node@v4
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
-          # If you wish to specify custom queries, you can do so here or in a config file.
-          # By default, queries listed here will override any specified in a config file.
-          # Prefix the list here with "+" to use these queries in addition to those in the config file.
           # queries: security-extended,security-and-quality
 
-      # If analyze step reports "We were unable to automatically build your code",
-      # set the matrix build-mode to "manual" and use a manual build step like below.
       - name: Run manual build steps
         if: matrix.build-mode == 'manual'
         shell: bash
@@ -81,8 +62,6 @@ jobs:
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}"
-          # Write SARIF output to a known path so we can upload it as an artifact.
-          # The action will create the directory if necessary.
           output: codeql-report/${{ matrix.language }}.sarif
 
       - name: List generated SARIF files (debug)
@@ -93,8 +72,6 @@ jobs:
       - name: Upload CodeQL Analysis Results (SARIF)
         uses: actions/upload-artifact@v4
         with:
-          # Use a predictable, unique artifact name containing repo, language and run time.
-          # Format examples: <repo>-javascript-typescript-codeql-report-2025-12-14-11-26
           name: ${{ github.event.repository.name }}-${{ matrix.language }}-codeql-report-${{ format('{0:yyyy-MM-dd-HH-mm}', github.run_started_at) }}
           path: codeql-report/*.sarif
           retention-days: 5
