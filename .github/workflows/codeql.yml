@@ -97,3 +97,23 @@ jobs:
       uses: github/codeql-action/analyze@v4
       with:
         category: "/language:${{matrix.language}}"
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:${{matrix.language}}"
+ # Spécifie où stocker le fichier SARIF généré localement.
+ # Par défaut, il est stocké dans $GITHUB_WORKSPACE/../codeql-results
+ # Nous utilisons l'option output pour le placer dans le répertoire souhaité pour l'artifact.
+ output: codeql-report
+
+ # ÉTAPE MISE À JOUR AVEC DATE ET HEURE #
+    - name: Upload CodeQL Analysis Results (SARIF)
+       uses: actions/upload-artifact@v4
+      with:
+ # Nous utilisons 'github.event.repository.name' et 'github.run_started_at' 
+ # pour créer un nom d'artefact unique et traçable.
+ # Format: <repo_name>-<lang>-<AAAA-MM-JJ-HH-MM>
+      name: ${{ github.event.repository.name }}-${{ matrix.language }}-codeql-report-${{ format('{0:yyyy-MM-dd-HH-mm}', github.run_started_at) }}
+      path: codeql-report/*.sarif
+      retention-days: 5
