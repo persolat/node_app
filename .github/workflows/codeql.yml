@@ -70,8 +70,19 @@ jobs:
           ls -la codeql-report || true
 
       - name: Upload CodeQL Analysis Results (SARIF)
+      - name: Set timestamp and unique name
+       id: timestamp
+       run: |
+        TIMESTAMP=$(date +'%Y-%m-%d-%H-%M')
+        echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
+       # Le nom de l'artefact sera plus fiable
+       ARTIFACT_NAME="${{ github.event.repository.name }}-${{ matrix.language }}-codeql-report-$TIMESTAMP"
+       echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+
+      - name: Upload CodeQL Analysis Results (SARIF)
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.repository.name }}-${{ matrix.language }}-codeql-report-${{ format('{0:yyyy-MM-dd-HH-mm}', github.run_started_at) }}
+          # Utilise la sortie de l'étape précédente
+          name: ${{ steps.timestamp.outputs.artifact_name }}
           path: codeql-report/*.sarif
           retention-days: 5
