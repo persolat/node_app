@@ -23,9 +23,9 @@ jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
     # Runner size impacts CodeQL analysis time. To learn more, please see:
-    #   - https://gh.io/recommended-hardware-resources-for-running-codeql
-    #   - https://gh.io/supported-runners-and-hardware-resources
-    #   - https://gh.io/using-larger-runners (GitHub.com only)
+    #   - https://gh.io/recommended-hardware-resources-for-running-codeql
+    #   - https://gh.io/supported-runners-and-hardware-resources
+    #   - https://gh.io/using-larger-runners (GitHub.com only)
     # Consider using larger runners or machines with greater resources for possible analysis time improvements.
     runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
     permissions:
@@ -38,6 +38,9 @@ jobs:
       # only required for workflows in private repositories
       actions: read
       contents: read
+      
+      # required for pull requests from forks
+      pull-requests: read
 
     strategy:
       fail-fast: false
@@ -54,9 +57,6 @@ jobs:
         # If you are analyzing a compiled language, you can modify the 'build-mode' for that language to customize how
         # your codebase is analyzed, see https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
 
-    # ----------------------------------------------------------------------
-    # CORRECTION LIGNE 39 : 'steps' est maintenant correctement indenté ici.
-    # ----------------------------------------------------------------------
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -65,7 +65,7 @@ jobs:
     # This includes steps like installing compilers or runtimes (`actions/setup-node`
     # or others). This is typically only required for manual builds.
     # - name: Setup runtime (example)
-    #   uses: actions/setup-example@v1
+    #   uses: actions/setup-example@v1
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
@@ -91,25 +91,25 @@ jobs:
       shell: bash
       run: |
         echo 'If you are using a "manual" build mode for one or more of the' \
-          'languages you are analyzing, replace this with the commands to build' \
-          'your code, for example:'
-        echo '  make bootstrap'
-        echo '  make release'
+          'languages you are analyzing, replace this with the commands to build' \
+          'your code, for example:'
+        echo '  make bootstrap'
+        echo '  make release'
         exit 1
 
     - name: Perform CodeQL Analysis and write SARIF
       uses: github/codeql-action/analyze@v4
       with:
-        category: "/language:${{matrix.language}}""
+        category: "/language:${{matrix.language}}"
         # L'option 'output' spécifie le répertoire où les fichiers SARIF seront écrits.
         output: codeql-report
 
     # ----------------------------------------------------------------------
-    # NOUVEAU BLOC : Correction du nommage des artefacts (évite l'erreur 'Null').
+    # Correction du nommage des artefacts (évite l'erreur 'Null').
     # ----------------------------------------------------------------------
 
     - name: Set artifact name with reliable timestamp
-      id: timestamp_setup # Nous donnons un ID à cette étape pour accéder à sa sortie.
+      id: timestamp_setup
       run: |
         # Génère le timestamp au format AAAA-MM-JJ-HH-MM (plus fiable que 'format()').
         TIMESTAMP=$(date +'%Y-%m-%d-%H-%M')
@@ -127,3 +127,4 @@ jobs:
         # Cherche tous les fichiers SARIF dans le répertoire 'codeql-report'.
         path: codeql-report/*.sarif
         retention-days: 5
+        if-no-files-found: warn
